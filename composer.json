@@ -1,0 +1,43 @@
+{
+    "type": "php-parsers",
+    "prefer-stable": true,
+    "name": "fpoirotte/dotgraph",
+    "description": "Parse and build graphs defined using the Dot language (http://www.graphviz.org/doc/info/lang.html)",
+    "keywords": ["dot", "parser", "graphviz"],
+    "homepage": "https://github.com/fpoirotte/DotGraph",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "François Poirotte",
+            "email": "clicky@erebot.net",
+            "role": "lead"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/fpoirotte/DotGraph/issues",
+        "source": "https://github.com/fpoirotte/DotGraph"
+    },
+    "require": {
+        "php": ">=7.1",
+        "ext-DOM": "*",
+        "ext-pcre": "*",
+         "fpoirotte/php_parsergenerator_installer": "^0.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=7.0",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "fpoirotte\\DotGraph\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
+        },
+        "php-parsers": {
+             "src/Parser.php": "src/Parser.y"
+         }
+    }
+}

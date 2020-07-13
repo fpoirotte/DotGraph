@@ -1,0 +1,20 @@
+strict digraph "foobar" {
+  node [color=yellow];
+  A [color=red];
+  subgraph {
+    node [color=green];
+    A [color=blue]; B; C;
+  } -> A;
+  D;
+
+  subgraph "cluster foo" {
+    X;
+  } -> subgraph "cluster foo" {
+    Y;
+  }
+  subgraph "cluster bar" {
+    Y; Z;
+  }
+
+  J -> K -> L [color=red];
+}

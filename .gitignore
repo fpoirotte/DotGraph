@@ -1,0 +1,13 @@
+# Ignore composer's vendor/ dir.
+/vendor
+
+/docs/api
+/docs/coverage
+/docs/enduser
+
+/build
+/*.tagfile.xml
+/*.svg
+
+/src/Parser.out
+/src/Parser.php
