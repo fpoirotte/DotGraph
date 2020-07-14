@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace fpoirotte\DotGraph;
 
-abstract class AbstractGraph extends AbstractAccessors
+abstract class AbstractGraph extends AbstractAccessors implements \Countable
 {
     protected $_name;
     protected $_nodes;
@@ -25,6 +25,11 @@ abstract class AbstractGraph extends AbstractAccessors
         $this->_parent      = null;
         $this->_subgraphs   = array();
         $this->_attributes  = new Attributes($attributes);
+    }
+
+    public function count()
+    {
+        return count($this->_nodes);
     }
 
     public function iterGraphsHierarhy(): \Traversable
