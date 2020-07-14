@@ -40,7 +40,7 @@ class DotTest extends TestCase
 
     public function dotFiles()
     {
-        $it = new \GlobIterator(__DIR__ . DIRECTORY_SEPARATOR . 'testdata' . DIRECTORY_SEPARATOR. '*.dot',
+        $it = new \GlobIterator('tests' . DIRECTORY_SEPARATOR . 'testdata' . DIRECTORY_SEPARATOR. '*.dot',
                                 \FilesystemIterator::CURRENT_AS_PATHNAME);
         foreach ($it as $file) {
             yield [$file];
