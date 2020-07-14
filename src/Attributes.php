@@ -67,9 +67,7 @@ class Attributes implements \ArrayAccess, \IteratorAggregate, \Countable
 
     public function getIterator(): \Traversable
     {
-        foreach ($this->attributes as $key => $value) {
-            yield $key => $value;
-        }
+        yield from $this->attributes;
     }
 
     public function asDot(int $depth = 0): string

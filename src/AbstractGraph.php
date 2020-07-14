@@ -36,9 +36,7 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable
     {
         yield $this;
         foreach ($this->_subgraphs as $subgraph) {
-            foreach ($subgraph->iterGraphsHierarhy() as $graph) {
-                yield $graph;
-            }
+            yield from $subgraph->iterGraphsHierarhy();
         }
     }
 
