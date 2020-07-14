@@ -99,12 +99,22 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable
 
     public function addNode(string $name, array $attributes = []): void
     {
+        for ($root = $this; $root->_parent !== null; $root = $root->_parent) {
+            // Do nothing.
+        }
+
         $node = $this->getNode($name);
         if ($node !== null) {
             $node->attributes->merge($attributes);
         } else {
             $this->_nodes[$name] = new Node($this, $name, $attributes);
         }
+
+        if ($root == $this) {
+            return;
+        }
+
+        $root->addNode($name, $attributes);
     }
 
     public function getNode(string $name): ?Node
