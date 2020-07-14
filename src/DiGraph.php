@@ -150,6 +150,41 @@ class DiGraph extends AbstractGraph implements \ArrayAccess {
         }
     }
 
+    public function iterEdges(?string $a, ?string $b): \Traversable
+    {
+        if ($a === null && $b === null) {
+            yield from $this->_edges;
+        }
+
+        if (static::GRAPH_TYPE == 'graph') {
+            foreach ($this->_edges as $edge) {
+                $nodes = [null, $edge->source, $edge->destination];
+
+                $aKey = array_search($a, $nodes, true);
+                if ($aKey === false) {
+                    continue;
+                }
+
+                // Prevents matching of ['a', 'b'] when calling
+                // iterEdges('a', 'b').
+                unset($nodes[$aKey]);
+
+                if (in_array($b, $nodes, true)) {
+                    yield $edge;
+                }
+            }
+            return;
+        }
+
+        foreach ($this->_edges as $edge) {
+            $srcMatch = ($a === null || $a === $edge->source);
+            $dstMatch = ($b === null || $b === $edge->destination);
+            if ($srcMatch && $dstMatch) {
+                yield $edge;
+            }
+        }
+    }
+
     public function predecessors(string $node): array
     {
         $res = [];
