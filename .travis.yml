@@ -1,6 +1,6 @@
 language: php
-
-sudo: false
+os: linux
+dist: xenial
 
 cache:
   directories:
@@ -14,7 +14,7 @@ php:
   - 7.4
   - nightly
 
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
     - php: nightly
