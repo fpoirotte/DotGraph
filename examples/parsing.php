@@ -60,7 +60,7 @@ $k = $graph['K'];
 //      the first edge found is returned.
 //      If you need to iterate over all edges between two nodes,
 //      use the iterEdges() method described below instead. 
-$kl = $graph[ ['K', 'L'] ];
+$kl = $graph[ ['K' => 'L'] ];
 
 // Similar code, using iterEdges() which returns a list of edges between
 // two nodes instead.

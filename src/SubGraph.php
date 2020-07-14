@@ -17,4 +17,62 @@ class SubGraph extends AbstractGraph
         $res[]  = "$indent}\n";
         return implode('', $res);
     }
+
+    public function offsetSet($offset, $value)
+    {
+        if ($offset === null) {
+            $offset = $value;
+            $value  = [];
+        }
+
+        if (is_iterable($offset)) {
+            foreach ($offset as $node) {
+                $this->addNode($node, $value);
+            }
+        } else {
+            $this->addNode($offset, $value);
+        }
+    }
+
+    public function offsetGet($offset)
+    {
+        if (!is_iterable($offset)) {
+            $offset = [$offset];
+        }
+
+        foreach ($offset as $node) {
+            $res = $this->getNode($dst);
+            if ($res !== null) {
+                return $res;
+            }
+        }
+        return null;
+    }
+
+    public function offsetExists($offset)
+    {
+        if (!is_iterable($offset)) {
+            $offset = [$offset];
+        }
+
+        $notEmpty = false;
+        foreach ($offset as $node) {
+            if (!$this->hasNode($node)) {
+                return false;
+            }
+            $notEmpty = true;
+        }
+        return $notEmpty;
+    }
+
+    public function offsetUnset($offset)
+    {
+        if (!is_iterable($offset)) {
+            $offset = [$offset];
+        }
+
+        foreach ($offset as $node) {
+            $this->removeNode($node);
+        }
+    }
 }

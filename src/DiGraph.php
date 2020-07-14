@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace fpoirotte\DotGraph;
 
-class DiGraph extends AbstractGraph implements \ArrayAccess {
+class DiGraph extends AbstractGraph {
     const STRICT = true;
     const GRAPH_TYPE = 'digraph';
 
@@ -44,17 +44,21 @@ class DiGraph extends AbstractGraph implements \ArrayAccess {
     public function offsetSet($offset, $value)
     {
         if ($offset === null) {
-            if (is_array($value)) {
-                // $g[] = ['foo', 'bar']; or $g[] = ['foo', 'bar', [...]];
-                $this->addEdge(...$value);
-            } else {
-                // $g[] = 'foo';
-                $this->addNode($value);
+            // Turn $g[] = [...]; into $g[...] = [];
+            $offset = $value;
+            $value  = [];
+        }
+
+        if (is_iterable($offset)) {
+            foreach ($offset as $src => $dst) {
+                if (is_int($src)) {
+                    // $g[ ['foo', 'bar'] ] = [...];
+                    $this->addNode($dst, $value);
+                } else {
+                    // $g[ ['foo' => 'bar'] ] = [...];
+                    $this->addEdge($src, $dst, $value);
+                }
             }
-        } else if (is_array($offset)) {
-            // $g[ ['foo', 'bar'] ] = [...];
-            $offset[] = $value;
-            $this->addEdge(...$offset);
         } else {
             // $g['foo'] = [...];
             $this->addNode($offset, $value);
@@ -63,26 +67,48 @@ class DiGraph extends AbstractGraph implements \ArrayAccess {
 
     public function offsetGet($offset)
     {
-        if (is_array($offset)) {
-            return $this->getEdge(...$offset);
+        if (!is_iterable($offset)) {
+            $offset = [$offset];
         }
-        return $this->getNode($offset);
+
+        foreach ($offset as $src => $dst) {
+            $res = is_int($src) ? $this->getNode($dst) : $this->getEdge($src, $dst);
+            if ($res !== null) {
+                return $res;
+            }
+        }
+        return null;
     }
 
     public function offsetExists($offset)
     {
-        if (is_array($offset)) {
-            return $this->hasEdge(...$offset);
+        if (!is_iterable($offset)) {
+            $offset = [$offset];
         }
-        return $this->hasNode($offset);
+
+        $notEmpty = false;
+        foreach ($offset as $src => $dst) {
+            $exists = is_int($src) ? $this->hasNode($dst) : $this->hasEdge($src, $dst);
+            if (!$exists) {
+                return false;
+            }
+            $notEmpty = true;
+        }
+        return $notEmpty;
     }
 
     public function offsetUnset($offset)
     {
-        if (is_array($offset)) {
-            $this->removeEdge(...$offset);
-        } else {
-            $this->removeNode($offset);
+        if (!is_iterable($offset)) {
+            $offset = [$offset];
+        }
+
+        foreach ($offset as $src => $dst) {
+            if (is_int($src)) {
+                $this->removeNode($dst);
+            } else {
+                $this->removeEdge($src, $dst);
+            }
         }
     }
 

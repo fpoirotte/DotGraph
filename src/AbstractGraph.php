@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace fpoirotte\DotGraph;
 
-abstract class AbstractGraph extends AbstractAccessors implements \Countable
+abstract class AbstractGraph extends AbstractAccessors implements \Countable, \ArrayAccess
 {
     protected $_name;
     protected $_nodes;

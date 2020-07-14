@@ -9,8 +9,8 @@ require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR 
 
 // Create a new graph with several nodes and edges.
 $graph = new \fpoirotte\DotGraph\DiGraph('My graph', ['bgcolor' => 'lightgray']);
-$graph[] = ['A', 'B'];
-$graph[] = ['A', 'C'];
+$graph[] = ['A' => 'B'];
+$graph[] = ['A' => 'C'];
 
 // Add a subgraph to the graph. The arguments for the constructor are the same
 // as for a regular graph (a name and an array of attributes to set).
@@ -27,14 +27,12 @@ $graph[] = ['A', 'C'];
 // See http://www.graphviz.org/doc/info/lang.html for more information
 // on subgraphs and clusters, but please note that not all features of
 // actual subgraphs may be supported by this library.
-$subgraph = new \fpoirotte\DotGraph\SubGraph('cluster VIP', ['rank' => 'same']);
+$subgraph = new \fpoirotte\DotGraph\SubGraph('cluster VIP');
 $graph->addSubGraph($subgraph);
 
-// Add the nodes "A" and "B" to the subgraph.
-// Due to the "rank=same" attribute on the subgraph, those nodes will be
-// visually rendered at the same level (and inside the same box).
-$subgraph[] = 'A';
-$subgraph[] = 'B';
+// Add the nodes "A" and "B" to the subgraph. Since the subgraph is defined
+// as a cluster, those nodes will be visually rendered inside a box.
+$subgraph[] = ['A', 'B'];
 
 // Casting a graph to a string returns its representation
 // using the DOT language.

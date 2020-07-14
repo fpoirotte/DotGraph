@@ -57,11 +57,11 @@ $graph['A'] = ['color' => 'red'];
 $graph[] = 'B';
 
 // Add a blue edge from "A" to "B".
-$graph[ ['A', 'B'] ] = ['color' => 'blue'];
+$graph[ ['A' => 'B'] ] = ['color' => 'blue'];
 
 // And an edge from "B" to "A".
-// This is effectively a shortcut for: $graph[ ['B', 'A'] ] = [].
-$graph[] = ['B', 'A'];
+// This is effectively a shortcut for: $graph[ ['B' => 'A'] ] = [].
+$graph[] = ['B' => 'A'];
 
 // Overwrite the color of node "A".
 // Since the node has already been defined, the new attributes
@@ -73,20 +73,20 @@ $graph['B'] = ['color' => 'green'];
 // if it already exists and the graph is a Graph or DiGraph.
 // Note: in a MultiGraph or MultiDiGraph, a new edge will be
 //       created with the given attributes instead.
-$graph[ ['A', 'B'] ] = ['color' => 'yellow'];
+$graph[ ['A' => 'B'] ] = ['color' => 'yellow'];
 
 // Referencing nodes within an edge which have not yet been defined
 // for this graph will automatically declare them.
 // The following code is effectively equivalent to this one:
 //      $graph[] = 'X';
 //      $graph[] = 'Y';
-//      $graph[ ['X', 'Y'] ] = ['color' => 'red'];
-$graph[ ['X', 'Y'] ] = ['color' => 'red'];
+//      $graph[ ['X' => 'Y'] ] = ['color' => 'red'];
+$graph[ ['X' => 'Y'] ] = ['color' => 'red'];
 
 // Removing an edge does not automatically remove its nodes from the graph.
 // Therefore, the nodes "X" and "Y" still exist inside the graph after
 // the following line is executed.
-unset($graph[ ['X', 'Y'] ]);
+unset($graph[ ['X' => 'Y'] ]);
 
 // On the other hand, removing a node from the graph also removes
 // all of the edges that referenced it.
