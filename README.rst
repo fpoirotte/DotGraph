@@ -1,4 +1,4 @@
-Dot graphs for PHP
+DOT graphs for PHP
 ==================
 
 This component provides a way to parse, edit and export graphs defined
@@ -21,7 +21,7 @@ To use it, just add a requirement on the package:
 Usage
 -----
 
-The `example folder <./examples/>` contains several usage examples.
+The `examples <./examples/>`_ folder contains several usage examples.
 
 
 Contributions
@@ -38,8 +38,7 @@ License
 -------
 
 This project is released under the MIT license.
-See the `LICENSE <https://github.com/fpoirotte/DotGraph/blob/master/LICENSE>`_
-file for more information.
+See the `LICENSE <./LICENSE>`_ file for more information.
 
 .. vim: ts=4 et
 
