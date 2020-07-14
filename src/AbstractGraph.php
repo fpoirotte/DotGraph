@@ -141,4 +141,9 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable
 
         return implode('', $res);
     }
+
+    public function __toString(): string
+    {
+        return $this->asDot();
+    }
 }

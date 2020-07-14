@@ -41,11 +41,6 @@ class DiGraph extends AbstractGraph implements \ArrayAccess {
         return implode('', $res);
     }
 
-    public function __toString(): string
-    {
-        return $this->asDot();
-    }
-
     public function offsetSet($offset, $value)
     {
         if ($offset === null) {
