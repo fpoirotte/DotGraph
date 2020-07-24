@@ -55,7 +55,6 @@ class Attribute
             $root = $this->value->ownerDocument ?? $this->value;
             $value = $root->saveXML($this->value->documentElement, LIBXML_NOXMLDECL);
         }
-
         return "$indent$name=<$value>;\n";
     }
 }

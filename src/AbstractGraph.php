@@ -40,7 +40,7 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable, \A
         }
     }
 
-    public function addSubgraph(SubGraph $subgraph): void
+    public function addSubgraph(SubGraph $subgraph): SubGraph
     {
         // Detect potential duplicates.
         $duplicate = false;
@@ -66,11 +66,12 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable, \A
         }
 
         if ($duplicate) {
-            return;
+            return $subgraph;
         }
 
         $subgraph->_parent  = $this;
         $this->_subgraphs[] = $subgraph;
+        return $subgraph;
     }
 
     public function removeSubgraph(SubGraph $subgraph): void
@@ -97,7 +98,7 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable, \A
         return null;
     }
 
-    public function addNode(string $name, array $attributes = []): void
+    public function addNode(string $name, array $attributes = []): Node
     {
         for ($root = $this; $root->_parent !== null; $root = $root->_parent) {
             // Do nothing.
@@ -107,14 +108,15 @@ abstract class AbstractGraph extends AbstractAccessors implements \Countable, \A
         if ($node !== null) {
             $node->attributes->merge($attributes);
         } else {
-            $this->_nodes[$name] = new Node($this, $name, $attributes);
+            $node = new Node($this, $name, $attributes);
+            $this->_nodes[$name] = $node;
         }
 
         if ($root == $this) {
-            return;
+            return $node;
         }
 
-        $root->addNode($name, $attributes);
+        return $root->addNode($name, $attributes);
     }
 
     public function getNode(string $name): ?Node

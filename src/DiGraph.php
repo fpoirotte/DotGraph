@@ -123,7 +123,7 @@ class DiGraph extends AbstractGraph {
         $this->_edges = array_filter($this->_edges);
     }
 
-    public function addEdge(string $a, string $b, array $attributes = []): void
+    public function addEdge(string $a, string $b, array $attributes = []): Edge
     {
         $this->addNode($a);
         $this->addNode($b);
@@ -131,26 +131,22 @@ class DiGraph extends AbstractGraph {
         $edge = $this->getEdge($a, $b);
         if ($edge !== null && static::STRICT) {
             $edge->attributes->merge($attributes);
-            return;
+            return $edge;
         }
 
-        $nodes = [$a, $b];
-        if (static::GRAPH_TYPE == 'graph') {
-            sort($nodes, \SORT_STRING);
-        }
-        $nodes[] = $attributes;
-        $this->_edges[] = new Edge($this, ...$nodes);
+        $edge = new Edge($this, $a, $b, $attributes);
+        $this->_edges[] = $edge;
+        return $edge;
     }
 
     public function getEdge(string $a, string $b): ?Edge
     {
         $nodes = [$a, $b];
-        if (static::GRAPH_TYPE == 'graph') {
-            sort($nodes, \SORT_STRING);
-        }
-
         foreach ($this->_edges as $edge) {
             if ($edge->source === $nodes[0] && $edge->destination === $nodes[1]) {
+                return $edge;
+            }
+            if ($edge->source === $nodes[1] && $edge->destination === $nodes[0]) {
                 return $edge;
             }
         }
@@ -192,7 +188,7 @@ class DiGraph extends AbstractGraph {
                 }
 
                 // Prevents matching of ['a', 'b'] when calling
-                // iterEdges('a', 'b').
+                // iterEdges('a', 'a').
                 unset($nodes[$aKey]);
 
                 if (in_array($b, $nodes, true)) {
