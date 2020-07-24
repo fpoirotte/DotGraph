@@ -386,18 +386,53 @@ edge_stmt ::= node_id_or_subgraph(B) edge_rhs(C) stmt_attrs(D). {
     $inheritedNode  = array_merge(...$this->attributes[self::TOKEN_NODE]);
     $inheritedEdge  = array_merge(...$this->attributes[self::TOKEN_EDGE]);
     $inheritedEdge  = array_merge($inheritedEdge, D);
+    $compass        = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw', 'c', '_'];
 
     $sources = B;
     foreach (C as $destinations) {
-        foreach ($sources->nodes as $source) {
-            foreach ($destinations->nodes as $destination) {
+        foreach ($sources[0]->nodes as $source) {
+            foreach ($destinations[0]->nodes as $destination) {
                 if (!$this->graphs[0]->hasNode($source->name)) {
                     $this->graphs[0]->addNode($source->name, $inheritedNode);
                 }
                 if (!$this->graphs[0]->hasNode($destination->name)) {
                     $this->graphs[0]->addNode($destination->name, $inheritedNode);
                 }
-                $this->graphs[0]->addEdge($source->name, $destination->name, $inheritedEdge);
+                $edge = $this->graphs[0]->addEdge($source->name, $destination->name, $inheritedEdge);
+
+                // Add port/compass information for the edge.
+                switch (count($sources[1])) {
+                    // nodeID:port:compass
+                    case 2:
+                        $edge->sourcePort       = $sources[1][0];
+                        $edge->sourceCompass    = $sources[1][1];
+                        break;
+
+                    // nodeID:port or nodeID:compass
+                    case 1:
+                        if (in_array($sources[1][0], $compass, true)) {
+                            $edge->sourceCompass = $sources[1][0];
+                        } else {
+                            $edge->sourcePort = $sources[1][0];
+                        }
+                        break;
+                }
+                switch (count($destinations[1])) {
+                    // nodeID:port:compass
+                    case 2:
+                        $edge->destinationPort      = $destinations[1][0];
+                        $edge->destinationCompass   = $destinations[1][1];
+                        break;
+
+                    // nodeID:port or nodeID:compass
+                    case 1:
+                        if (in_array($destinations[1][0], $compass, true)) {
+                            $edge->destinationCompass = $destinations[1][0];
+                        } else {
+                            $edge->destinationPort = $destinations[1][0];
+                        }
+                        break;
+                }
             }
         }
         $sources = $destinations;
@@ -407,8 +442,8 @@ edge_stmt ::= node_id_or_subgraph(B) edge_rhs(C) stmt_attrs(D). {
 stmt_attrs(A) ::= attr_list(B).    { A = B; }
 stmt_attrs(A) ::= .                { A = []; }
 
-node_id_or_subgraph(A) ::= node_id(B).  { A = new SubGraph(''); A->addNode(B); }
-node_id_or_subgraph(A) ::= subgraph(B). { A = B; }
+node_id_or_subgraph(A) ::= node_id(B).  { A = [new SubGraph(''), B[1]]; A->addNode(B[0]); }
+node_id_or_subgraph(A) ::= subgraph(B). { A = [B, []]; }
 
 edge_rhs(A) ::= edge_rhs(B) edgeop node_id_or_subgraph(C).   { A = B; A[] = C; }
 edge_rhs(A) ::=             edgeop node_id_or_subgraph(C).   { A = [C]; }
@@ -427,23 +462,23 @@ edgeop ::= UNDIRECTED_EDGE. {
 node_stmt ::= node_id(B) stmt_attrs(C). {
     $inherited  = array_merge(...$this->attributes[self::TOKEN_NODE]);
     $inherited  = array_merge($inherited, C);
-    $this->graphs[count($this->graphs) - 1]->addNode(B, $inherited);
+    $this->graphs[count($this->graphs) - 1]->addNode(B[0], $inherited);
 }
 
-// @TODO Support "ports" (node position where edges should be attached)
 // Note: In a node definition context, ports do not seem to make much sense...
-//       The specification still allows them though.
-node_id(A) ::= id(B) port.  { A = B->value; }
-node_id(A) ::= id(B).       { A = B->value; }
+//       The specification still allows them, because the same production rule
+//       is used both for nodes declarations & edges declarations.
+node_id(A) ::= id(B) port(C).   { A = [B->value, C]; }
+node_id(A) ::= id(B).           { A = [B->value, []]; }
 
 // The second "id" is really a "compass_pt". However, the specification states
 // that "compass_pt" values are not recognized as special tokens by the parser
 // and any "id" is actually valid. Also, the first "id" can be either an actual
 // node ID, or a "compass_pt".
 // This results in an ambiguity and the specification says that the first "id"
-// should always be interpreted as a node ID in that case.
-port ::= COLON id COLON id. { }
-port ::= COLON id.          { }
+// should be interpreted as a compass value in that case.
+port(A) ::= COLON id(B) COLON id(C).    { A = [B->value, C->value]; }
+port(A) ::= COLON id(B).                { A = [B->value]; }
 
 subgraph(A) ::= subgraph_constructor(B) push_scope stmt_list pop_scope. {
     $this->graphs[count($this->graphs) - 1]->addSubgraph(B);
